@@ -8,7 +8,7 @@ const myToken = process.env.MYTOKEN;
 export const GET = withErrorHandler(async (req: NextRequest): Promise<NextResponse> => {
     const url = new URL(req.url);
     const mode = url.searchParams.get("hub.mode");
-    const challenge = url.searchParams.get("hub.challenge");
+    const challenge = parseInt(url.searchParams.get("hub.challenge") as string, 10)
     const verifyToken = url.searchParams.get("hub.verify_token");
 
     if (mode && verifyToken) {
