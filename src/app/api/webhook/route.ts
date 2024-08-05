@@ -1,26 +1,33 @@
 import { withErrorHandler } from "@/app/middlewares/errorHandler";
 import axios from "axios";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { NextApiRequest, NextApiResponse } from 'next';
 
 const token = process.env.TOKEN!;
-const myToken = process.env.MYTOKEN;
+const myToken = process.env.MYTOKEN!;
 
-export const GET = withErrorHandler(async (req: NextRequest): Promise<NextResponse> => {
-    const url = new URL(req.url);
-    const mode = url.searchParams.get("hub.mode");
-    const challenge = parseInt(url.searchParams.get("hub.challenge") as string, 10)
-    const verifyToken = url.searchParams.get("hub.verify_token");
+export const GET = async(req:NextRequest, res:NextApiResponse)=> {
+    try {
+        const url = new URL(req.url);
+        const mode = url.searchParams.get("hub.mode");
+        const challenge = parseInt(url.searchParams.get("hub.challenge") as string, 10)
+        const verifyToken = url.searchParams.get("hub.verify_token");
 
-    if (mode && verifyToken) {
-        if (mode === "subscribe" && verifyToken === myToken) {
-            return NextResponse.json(challenge);
-        } else {
-            return NextResponse.json({ status: 403 });
+        if (mode && verifyToken) {
+            if (mode === "subscribe" && verifyToken === myToken) {
+                console.log("Control here");
+                return NextResponse.json(challenge) as unknown as number
+            } else {
+                return NextResponse.json({status: 400, message: "Wrong credentials"})
+            }
         }
-    }
 
-    return NextResponse.json({ status: 400, message: "Bad Request" });
-});
+        return NextResponse.json({status: 400, message: "Bad request"})
+    } catch (error) {
+        return NextResponse.json({status: 500, message: "Internal Server Error"})
+    }
+}
 
 export const POST = withErrorHandler(async (req: NextRequest): Promise<NextResponse> => {
     const body_params = await req.json();
