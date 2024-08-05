@@ -17,7 +17,7 @@ export const GET = async(req:NextRequest, res:NextApiResponse)=> {
         if (mode && verifyToken) {
             if (mode === "subscribe" && verifyToken === myToken) {
                 console.log("Control here");
-                return NextResponse.json(challenge) as unknown as number
+                return NextResponse.json(challenge)
             } else {
                 return NextResponse.json({status: 400, message: "Wrong credentials"})
             }
