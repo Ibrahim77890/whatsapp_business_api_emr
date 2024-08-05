@@ -13,7 +13,7 @@ export const GET = withErrorHandler(async (req: NextRequest): Promise<NextRespon
 
     if (mode && verifyToken) {
         if (mode === "subscribe" && verifyToken === myToken) {
-            return NextResponse.json({ challenge });
+            return NextResponse.json(challenge);
         } else {
             return NextResponse.json({ status: 403 });
         }
